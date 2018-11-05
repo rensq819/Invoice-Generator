@@ -9,9 +9,9 @@ export class SideNavComponent implements OnInit {
 
   private mediaMatcher: MediaQueryList = matchMedia(`(max-width:${MAX_WIDTH_BREAKPOINT}px)`);
   constructor(zone: NgZone) {
-    this.mediaMatcher.addListener((mql) => {
-      zone.run(() => this.mediaMatcher = mql);
-    });
+    // this.mediaMatcher.addListener((mql) => {
+    //   zone.run(() => this.mediaMatcher = mql);
+    // });
   }
 
   ngOnInit() {

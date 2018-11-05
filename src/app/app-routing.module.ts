@@ -1,6 +1,6 @@
 import { NgModule } from '@angular/core';
 import { Routes, RouterModule } from '@angular/router';
-import { InvoiceBuilderModule } from './invoice-builder/invoice-builder.module';
+import { DashboardModule } from './dashboard/dashboard.module';
 import { AppComponent } from './app.component';
 
 const routes: Routes = [
@@ -9,12 +9,12 @@ const routes: Routes = [
     component: AppComponent
   },
   {
-    path: 'invoice-builder',
-    loadChildren: './invoice-builder/invoice-builder.module#InvoiceBuilderModule'
+    path: 'dashboard',
+    loadChildren: './dashboard/dashboard.module#DashboardModule'
   },
   {
     path: '**',
-    redirectTo: 'invoice-builder'
+    redirectTo: 'dashboard'
   }
 ];
 
