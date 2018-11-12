@@ -8,7 +8,7 @@
       "type": "node",
       "request": "launch",
       "name": "Launch Program",
-      "program": "${workspaceFolder}server\\dist\\app.js",
+      "program": "${workspaceFolder}/server\\dist\\app.js",
       "sourceMaps": true
     }
   ]
