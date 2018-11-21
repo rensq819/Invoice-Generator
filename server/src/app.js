@@ -4,6 +4,7 @@ import {router} from './config/routes';
 import logger from 'morgan';
 import swaggerUi from 'swagger-ui-express';
 import swaggerDocument from './config/swagger.json';
+import cors from 'cors';
 
 mongoose.Promise = global.Promise;
 mongoose.connect('mongodb://localhost/invoice-builder');
@@ -11,6 +12,7 @@ mongoose.connect('mongodb://localhost/invoice-builder');
 const app = express();
 const PORT = 3000;
 
+app.use(cors());
 app.use(express.json()); //bodyParser 
 app.use(express.urlencoded());
 app.use(logger('dev'));
@@ -29,31 +31,6 @@ app.use((error, req, res, next) => {
   return res.json({
     error: { message: error.message } 
   });
-});
-
-const invoices = [
-  {
-    _id: '1234',
-    item: 'Amazon Product',
-    qty: '12',
-    date: new Date()
-  },
-  {
-    _id: '2345',
-    item: 'Google Product',
-    qty: '12',
-    date: new Date()
-  },
-  {
-    _id: '3456',
-    item: 'Linked Product',
-    qty: '12',
-    date: new Date()
-  }
-];
-
-app.get('/invoices', (req, res) => {
-  res.json(invoices);
 });
 
 app.listen(PORT, () => {

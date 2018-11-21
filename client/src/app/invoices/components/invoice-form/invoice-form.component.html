@@ -1,0 +1,34 @@
+<mat-card>
+  {{this.invoiceForm.value | json}}
+  <form class="form-container" [formGroup]="invoiceForm">
+    <mat-form-field> <input matInput placeholder="Item" formControlName="item"/> </mat-form-field>
+
+    <mat-form-field>
+      <input matInput [matDatepicker]="datePicker" placeholder="Date" formControlName="date"/>
+      <mat-datepicker-toggle
+        matSuffix
+        [for]="datePicker"
+      ></mat-datepicker-toggle>
+      <mat-datepicker #datePicker></mat-datepicker>
+    </mat-form-field>
+
+    <mat-form-field>
+      <input matInput [matDatepicker]="duePicker" placeholder="Due Date" formControlName="due"/>
+      <mat-datepicker-toggle
+        matSuffix
+        [for]="duePicker"
+      ></mat-datepicker-toggle>
+      <mat-datepicker #duePicker></mat-datepicker>
+    </mat-form-field>
+
+    <mat-form-field>
+      <input matInput placeholder="Quantity" type="number" formControlName="qty"/>
+    </mat-form-field>
+    <mat-form-field>
+      <input matInput placeholder="Tax" type="number" formControlName="tax"/>
+    </mat-form-field>
+    <mat-form-field>
+      <input matInput placeholder="Rate" type="number" formControlName="rate"/>
+    </mat-form-field>
+  </form>
+</mat-card>
