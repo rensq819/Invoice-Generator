@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { FormGroup, FormBuilder } from '@angular/forms';
+import { InvoiceService } from '../../services/invoice.service';
 
 @Component({
   selector: 'app-invoice-form',
@@ -7,15 +8,18 @@ import { FormGroup, FormBuilder } from '@angular/forms';
   styleUrls: ['./invoice-form.component.scss']
 })
 export class InvoiceFormComponent implements OnInit {
-
   invoiceForm: FormGroup;
 
-  constructor(private fb: FormBuilder) { }
+  constructor(
+    private fb: FormBuilder,
+    private invoiceService: InvoiceService
+  ) {}
 
   ngOnInit() {
     this.createForm();
   }
-  createForm(){
+
+  createForm() {
     this.invoiceForm = this.fb.group({
       item: '',
       date: '',
@@ -23,7 +27,17 @@ export class InvoiceFormComponent implements OnInit {
       qty: '',
       rate: '',
       tax: ''
-    })
+    });
   }
 
+  onSubmit() {
+    this.invoiceService.createInvoice(this.invoiceForm.value).subscribe(
+      data => {
+        console.log(data);
+      },
+      err => {
+        console.error(err);
+      }
+    );
+  }
 }
