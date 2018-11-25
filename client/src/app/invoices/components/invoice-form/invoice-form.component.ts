@@ -33,7 +33,7 @@ export class InvoiceFormComponent implements OnInit {
   onSubmit() {
     this.invoiceService.createInvoice(this.invoiceForm.value).subscribe(
       data => {
-        console.log(data);
+        this.invoiceForm.reset();
       },
       err => {
         console.error(err);

@@ -1,4 +1,5 @@
-<mat-card>
+<mat-card class="form-card">
+  <h3>Create Invoice</h3>
   {{ this.invoiceForm.value | json }}
   <form class="form-container" [formGroup]="invoiceForm" novalidatae (ngSubmit)="onSubmit()">
     <mat-form-field>
