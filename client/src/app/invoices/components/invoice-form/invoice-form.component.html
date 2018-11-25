@@ -1,9 +1,20 @@
 <mat-card class="form-card">
   <h3>Create Invoice</h3>
   {{ this.invoiceForm.value | json }}
-  <form class="form-container" [formGroup]="invoiceForm" novalidatae (ngSubmit)="onSubmit()">
+  <form
+    class="form-container"
+    [formGroup]="invoiceForm"
+    novalidatae
+    (ngSubmit)="onSubmit()"
+  >
     <mat-form-field>
       <input matInput placeholder="Item" formControlName="item" />
+      <mat-error
+        *ngIf="
+          invoiceForm.controls.item.invalid && invoiceForm.controls.item.touched
+        "
+        >Item is required</mat-error
+      >
     </mat-form-field>
 
     <mat-form-field>
@@ -18,6 +29,12 @@
         [for]="datePicker"
       ></mat-datepicker-toggle>
       <mat-datepicker #datePicker></mat-datepicker>
+      <mat-error
+        *ngIf="
+          invoiceForm.controls.date.invalid && invoiceForm.controls.date.touched
+        "
+        >Date is required</mat-error
+      >
     </mat-form-field>
 
     <mat-form-field>
@@ -32,6 +49,12 @@
         [for]="duePicker"
       ></mat-datepicker-toggle>
       <mat-datepicker #duePicker></mat-datepicker>
+      <mat-error
+        *ngIf="
+          invoiceForm.controls.due.invalid && invoiceForm.controls.due.touched
+        "
+        >Due date is required</mat-error
+      >
     </mat-form-field>
 
     <mat-form-field>
@@ -41,6 +64,12 @@
         type="number"
         formControlName="qty"
       />
+      <mat-error
+        *ngIf="
+          invoiceForm.controls.qty.invalid && invoiceForm.controls.qty.touched
+        "
+        >Quantity is required</mat-error
+      >
     </mat-form-field>
     <mat-form-field>
       <input matInput placeholder="Tax" type="number" formControlName="tax" />
@@ -50,7 +79,13 @@
     </mat-form-field>
 
     <div>
-      <button mat-raised-button type="submit" color="primary">Save</button
+      <button
+        mat-raised-button
+        [disabled]="!invoiceForm.valid"
+        type="submit"
+        color="primary"
+      >
+        Save</button
       ><button mat-raised-button type="reset">Cancel</button>
     </div>
   </form>

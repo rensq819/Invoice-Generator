@@ -1,4 +1,5 @@
 {
   "typescript.preferences.quoteStyle": "single",
-  "javascript.preferences.quoteStyle": "single"
+  "javascript.preferences.quoteStyle": "single",
+  "html.format.wrapLineLength": 160,
 }
