@@ -38,14 +38,19 @@ export class InvoiceFormComponent implements OnInit {
     this.invoiceService.createInvoice(this.invoiceForm.value).subscribe(
       data => {
         this.snackBar.open('Invoice Created', 'Success', {
-          duration: 2000
+          duration: 3000
         });
         this.invoiceForm.reset();
         this.router.navigate(['dashboard','invoices']);
       },
-      err => {
-        console.error(err);
-      }
+      err => this.errorHandler(err,'Failed to create Invoice')
     );
+  }
+
+  private errorHandler (error, message){
+    console.error(error);
+    this.snackBar.open(message, 'Error',{
+      duration: 3000
+    })
   }
 }
