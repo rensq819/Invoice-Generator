@@ -1,4 +1,6 @@
 import mongoose from 'mongoose';
+import mongoosePaginate from 'mongoose-paginate';
+
 const Schema = mongoose.Schema;
 const InvoiceSchema = new Schema({
   item: {
@@ -14,5 +16,7 @@ const InvoiceSchema = new Schema({
   rate: { type: Number },
   tax: { type: Number }
 });
+
+InvoiceSchema.plugin(mongoosePaginate);
 
 export default mongoose.model('Invoice', InvoiceSchema);
