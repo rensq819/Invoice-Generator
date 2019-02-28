@@ -1,8 +1,8 @@
-import { Component, OnInit } from "@angular/core";
+import { Component, OnInit, ViewChild } from "@angular/core";
 import { InvoiceService } from "../../services/invoice.service";
 import { Invoice } from "../../models/invoice";
 import { Router } from "@angular/router";
-import { MatSnackBar } from "@angular/material";
+import { MatSnackBar, MatPaginator } from "@angular/material";
 import { remove } from "lodash";
 
 @Component({
@@ -11,8 +11,10 @@ import { remove } from "lodash";
   styleUrls: ["./invoice-listing.component.scss"]
 })
 export class InvoiceListingComponent implements OnInit {
+  @ViewChild(MatPaginator) paginator: MatPaginator
   displayedColumns = ["item", "date", "due", "qty", "rate", "tax", "action"];
   dataSource: Invoice[] = [];
+  resultsLength = 0;
 
   constructor(
     private invoiceService: InvoiceService,
@@ -21,10 +23,7 @@ export class InvoiceListingComponent implements OnInit {
   ) {}
 
   ngOnInit() {
-    this.invoiceService.getInvoices().subscribe(data => {
-      this.dataSource = data;
-    }),
-      err => this.errorHandler(err, "Failed to fetch invoices");
+    this.populateInvoices();
   }
 
   createBtnHandler() {
@@ -50,6 +49,13 @@ export class InvoiceListingComponent implements OnInit {
     );
   }
 
+  private populateInvoices(){
+    this.invoiceService.getInvoices().subscribe(data => {
+      this.dataSource = data.docs;
+      this.resultsLength = data.total;
+    }),
+      err => this.errorHandler(err, "Failed to fetch invoices");
+  }
   private errorHandler(error, message) {
     console.error(error);
     this.snackBar.open(message, "Error", {
