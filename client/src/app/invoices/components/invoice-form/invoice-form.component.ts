@@ -1,14 +1,14 @@
-import { Component, OnInit } from "@angular/core";
-import { FormGroup, FormBuilder, Validators } from "@angular/forms";
-import { Router, ActivatedRoute } from "@angular/router";
-import { InvoiceService } from "../../services/invoice.service";
-import { MatSnackBar } from "@angular/material";
-import { Invoice } from "../../models/invoice";
+import { Component, OnInit } from '@angular/core';
+import { FormGroup, FormBuilder, Validators } from '@angular/forms';
+import { Router, ActivatedRoute } from '@angular/router';
+import { InvoiceService } from '../../services/invoice.service';
+import { MatSnackBar } from '@angular/material';
+import { Invoice } from '../../models/invoice';
 
 @Component({
-  selector: "app-invoice-form",
-  templateUrl: "./invoice-form.component.html",
-  styleUrls: ["./invoice-form.component.scss"]
+  selector: 'app-invoice-form',
+  templateUrl: './invoice-form.component.html',
+  styleUrls: ['./invoice-form.component.scss']
 })
 export class InvoiceFormComponent implements OnInit {
   private invoice: Invoice;
@@ -29,19 +29,19 @@ export class InvoiceFormComponent implements OnInit {
 
   createForm() {
     this.invoiceForm = this.fb.group({
-      item: ["", Validators.required],
-      date: ["", Validators.required],
-      due: ["", Validators.required],
-      qty: ["", Validators.required],
-      rate: "",
-      tax: ""
+      item: ['', Validators.required],
+      date: ['', Validators.required],
+      due: ['', Validators.required],
+      qty: ['', Validators.required],
+      rate: '',
+      tax: ''
     });
   }
 
   setInvoiceToForm() {
     // use activated route
     this.route.params.subscribe(params => {
-      let id = params["id"];
+      let id = params['id'];
       if (!id) {
         return;
       }
@@ -51,7 +51,7 @@ export class InvoiceFormComponent implements OnInit {
           // use formGroup patchValue to set values
           this.invoiceForm.patchValue(this.invoice);
         },
-        err => this.errorHandler(err, "Failed to get Invoice")
+        err => this.errorHandler(err, 'Failed to get Invoice')
       );
     });
   }
@@ -63,33 +63,33 @@ export class InvoiceFormComponent implements OnInit {
         .updateInvoiceById(this.invoice._id, this.invoiceForm.value)
         .subscribe(
           data => {
-            this.snackBar.open(" Invoice update", "Success", {
+            this.snackBar.open(' Invoice update', 'Success', {
               duration: 3000
             });
             this.invoiceForm.reset();
-            this.router.navigate(["dashboard", "invoices"]);
+            this.router.navigate(['dashboard', 'invoices']);
           },
-          err => this.errorHandler(err, "Failed to update invoice")
+          err => this.errorHandler(err, 'Failed to update invoice')
         );
     }
     // user wants to create new invoice
     else {
       this.invoiceService.createInvoice(this.invoiceForm.value).subscribe(
         data => {
-          this.snackBar.open("Invoice Created", "Success", {
+          this.snackBar.open('Invoice Created', 'Success', {
             duration: 3000
           });
           this.invoiceForm.reset();
-          this.router.navigate(["dashboard", "invoices"]);
+          this.router.navigate(['dashboard', 'invoices']);
         },
-        err => this.errorHandler(err, "Failed to create Invoice")
+        err => this.errorHandler(err, 'Failed to create Invoice')
       );
     }
   }
 
   private errorHandler(error, message) {
     console.error(error);
-    this.snackBar.open(message, "Error", {
+    this.snackBar.open(message, 'Error', {
       duration: 3000
     });
   }
