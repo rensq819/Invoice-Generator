@@ -5,14 +5,25 @@ import Invoice from '../models/invoice.model';
 export default {
   findAll(req, res, next) {
     // default page = 1, perPage = 10, if user does no specify the numbers
-    const { page = 1, perPage = 10 } = req.query;
+    const { page = 1, perPage = 10, filter, sortField, sortDir } = req.query;
     const options = {
       // if want to select only two columns
       // select: "_id item",
       page: parseInt(page, 10),
       limit: parseInt(perPage, 10)
     };
-    Invoice.paginate({}, options)
+    const query = {};
+    if (filter) {
+      query.item = {
+        $regex: filter
+      };
+    }
+    if (sortField && sortDir) {
+      options.sort = {
+        [sortField]: sortDir
+      };
+    }
+    Invoice.paginate(query, options)
       .then(invoices => res.json(invoices))
       .catch(err => res.status(HttpStatus.INTERNAL_SERVER_ERROR).json(err));
   },

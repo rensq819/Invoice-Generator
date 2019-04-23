@@ -1,6 +1,6 @@
 import express from 'express';
 import mongoose from 'mongoose';
-import {router} from './config/routes';
+import { router } from './config/routes';
 import logger from 'morgan';
 import swaggerUi from 'swagger-ui-express';
 import swaggerDocument from './config/swagger.json';
@@ -13,12 +13,16 @@ const app = express();
 const PORT = 3000;
 
 app.use(cors());
-app.use(express.json()); //bodyParser 
-app.use(express.urlencoded());
+app.use(express.json()); //bodyParser
+app.use(express.urlencoded({ extended: true }));
 app.use(logger('dev'));
-app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument,{
-  explorer: true
-}))
+app.use(
+  '/api-docs',
+  swaggerUi.serve,
+  swaggerUi.setup(swaggerDocument, {
+    explorer: true
+  })
+);
 app.use('/api', router);
 app.use((req, res, next) => {
   const error = new Error('Not Found');
@@ -29,7 +33,7 @@ app.use((req, res, next) => {
 app.use((error, req, res, next) => {
   res.status(error.status || 500);
   return res.json({
-    error: { message: error.message } 
+    error: { message: error.message }
   });
 });
 
