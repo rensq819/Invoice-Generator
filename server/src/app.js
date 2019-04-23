@@ -5,7 +5,7 @@ import logger from 'morgan';
 import swaggerUi from 'swagger-ui-express';
 import swaggerDocument from './config/swagger.json';
 import cors from 'cors';
-
+// test
 mongoose.Promise = global.Promise;
 mongoose.connect('mongodb://localhost/invoice-builder');
 
