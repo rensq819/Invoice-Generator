@@ -2,7 +2,7 @@ import { Component, OnInit, ViewChild, AfterViewInit } from '@angular/core';
 import { InvoiceService } from '../../services/invoice.service';
 import { Invoice } from '../../models/invoice';
 import { Router } from '@angular/router';
-import { MatSnackBar, MatPaginator } from '@angular/material';
+import { MatSnackBar, MatPaginator, MatSort } from '@angular/material';
 import { remove } from 'lodash';
 import { mergeMap } from 'rxjs/operators';
 
@@ -13,6 +13,7 @@ import { mergeMap } from 'rxjs/operators';
 })
 export class InvoiceListingComponent implements OnInit, AfterViewInit {
   @ViewChild(MatPaginator) paginator: MatPaginator;
+  @ViewChild(MatSort) sort: MatSort;
   displayedColumns = ['item', 'date', 'due', 'qty', 'rate', 'tax', 'action'];
   dataSource: Invoice[] = [];
   resultsLength = 0;
@@ -20,18 +21,19 @@ export class InvoiceListingComponent implements OnInit, AfterViewInit {
 
   constructor(private invoiceService: InvoiceService, private router: Router, private snackBar: MatSnackBar) {}
 
-  ngOnInit() {
-  }
+  ngOnInit() {}
 
   ngAfterViewInit() {
     this.isResultsLoading = true;
     this.paginator.page
       .pipe(
-        mergeMap(data => {
+        mergeMap(() => {
           this.isResultsLoading = true;
           return this.invoiceService.getInvoices({
-            page: data.pageIndex + 1,
-            perPage: data.pageSize
+            page: this.paginator.pageIndex,
+            perPage: this.paginator.pageSize,
+            sortField: this.sort.active,
+            sortDir: this.sort.direction
           });
         })
       )
@@ -46,6 +48,29 @@ export class InvoiceListingComponent implements OnInit, AfterViewInit {
         }
       );
 
+    this.sort.sortChange
+      .pipe(
+        mergeMap(() => {
+          this.isResultsLoading = true;
+          this.paginator.pageIndex = 0;
+          return this.invoiceService.getInvoices({
+            page: this.paginator.pageIndex,
+            perPage: this.paginator.pageSize,
+            sortField: this.sort.active,
+            sortDir: this.sort.direction
+          });
+        })
+      )
+      .subscribe(
+        data => {
+          this.dataSource = data.docs;
+          this.resultsLength = data.total;
+          this.isResultsLoading = false;
+        },
+        err => {
+          this.errorHandler(err, 'Failed to delete invoice');
+        }
+      );
     this.populateInvoices();
   }
 
@@ -74,16 +99,23 @@ export class InvoiceListingComponent implements OnInit, AfterViewInit {
 
   private populateInvoices() {
     this.isResultsLoading = true;
-    this.invoiceService.getInvoices({ page: 1, perPage: 10 }).subscribe(
-      data => {
-        this.dataSource = data.docs;
-        this.resultsLength = data.total;
-      },
-      err => this.errorHandler(err, 'Failed to fetch invoices'),
-      () => {
-        this.isResultsLoading = false;
-      }
-    );
+    this.invoiceService
+      .getInvoices({
+        page: this.paginator.pageIndex,
+        perPage: this.paginator.pageSize,
+        sortField: this.sort.active,
+        sortDir: this.sort.direction
+      })
+      .subscribe(
+        data => {
+          this.dataSource = data.docs;
+          this.resultsLength = data.total;
+        },
+        err => this.errorHandler(err, 'Failed to fetch invoices'),
+        () => {
+          this.isResultsLoading = false;
+        }
+      );
   }
   private errorHandler(error, message) {
     console.error(error);
