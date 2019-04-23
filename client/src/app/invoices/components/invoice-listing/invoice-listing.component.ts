@@ -2,9 +2,10 @@ import { Component, OnInit, ViewChild, AfterViewInit } from '@angular/core';
 import { InvoiceService } from '../../services/invoice.service';
 import { Invoice } from '../../models/invoice';
 import { Router } from '@angular/router';
-import { MatSnackBar, MatPaginator, MatSort } from '@angular/material';
+import { MatSnackBar, MatPaginator, MatSort, MatTable, MatTableDataSource } from '@angular/material';
 import { remove } from 'lodash';
-import { mergeMap } from 'rxjs/operators';
+import { of as observableOf } from 'rxjs';
+import { mergeMap, merge, catchError, map, startWith, switchMap } from 'rxjs/operators';
 
 @Component({
   selector: 'app-invoice-listing',
@@ -15,7 +16,7 @@ export class InvoiceListingComponent implements OnInit, AfterViewInit {
   @ViewChild(MatPaginator) paginator: MatPaginator;
   @ViewChild(MatSort) sort: MatSort;
   displayedColumns = ['item', 'date', 'due', 'qty', 'rate', 'tax', 'action'];
-  dataSource: Invoice[] = [];
+  dataSource = new MatTableDataSource<Invoice>();
   resultsLength = 0;
   isResultsLoading = false;
 
@@ -24,10 +25,11 @@ export class InvoiceListingComponent implements OnInit, AfterViewInit {
   ngOnInit() {}
 
   ngAfterViewInit() {
-    this.isResultsLoading = true;
     this.paginator.page
       .pipe(
-        mergeMap(() => {
+        merge(this.sort.sortChange),
+        startWith({}),
+        switchMap(() => {
           this.isResultsLoading = true;
           return this.invoiceService.getInvoices({
             page: this.paginator.pageIndex,
@@ -35,43 +37,21 @@ export class InvoiceListingComponent implements OnInit, AfterViewInit {
             sortField: this.sort.active,
             sortDir: this.sort.direction
           });
+        }),
+        map(data => {
+          this.isResultsLoading = false;
+          this.resultsLength = data.total;
+          return data.docs;
+        }),
+        catchError(() => {
+          this.isResultsLoading = false;
+          this.errorHandler('Failed to fetch invoices', 'Error');
+          return observableOf([]);
         })
       )
-      .subscribe(
-        data => {
-          this.dataSource = data.docs;
-          this.resultsLength = data.total;
-          this.isResultsLoading = false;
-        },
-        err => {
-          this.errorHandler(err, 'Failed to delete invoice');
-        }
-      );
-
-    this.sort.sortChange
-      .pipe(
-        mergeMap(() => {
-          this.isResultsLoading = true;
-          this.paginator.pageIndex = 0;
-          return this.invoiceService.getInvoices({
-            page: this.paginator.pageIndex,
-            perPage: this.paginator.pageSize,
-            sortField: this.sort.active,
-            sortDir: this.sort.direction
-          });
-        })
-      )
-      .subscribe(
-        data => {
-          this.dataSource = data.docs;
-          this.resultsLength = data.total;
-          this.isResultsLoading = false;
-        },
-        err => {
-          this.errorHandler(err, 'Failed to delete invoice');
-        }
-      );
-    this.populateInvoices();
+      .subscribe(data => {
+        this.dataSource.data = data;
+      });
   }
 
   createBtnHandler() {
@@ -85,10 +65,10 @@ export class InvoiceListingComponent implements OnInit, AfterViewInit {
   deleteBtnHandler(id) {
     this.invoiceService.deleteInvoice(id).subscribe(
       data => {
-        const removedItems = remove(this.dataSource, item => {
+        const removedItems = remove(this.dataSource.data, item => {
           return item._id === data._id;
         });
-        this.dataSource = [...this.dataSource];
+        this.dataSource.data = [...this.dataSource.data];
         this.snackBar.open('Invoice deleted', 'Success', {
           duration: 3000
         });
@@ -108,7 +88,7 @@ export class InvoiceListingComponent implements OnInit, AfterViewInit {
       })
       .subscribe(
         data => {
-          this.dataSource = data.docs;
+          // this.dataSource = data.docs;
           this.resultsLength = data.total;
         },
         err => this.errorHandler(err, 'Failed to fetch invoices'),
