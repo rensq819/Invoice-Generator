@@ -17,6 +17,7 @@ import {
   MatNativeDateModule,
   MatSnackBarModule,
   MatPaginatorModule,
+  MatSortModule,
   MatProgressSpinnerModule
 } from '@angular/material';
 
@@ -37,6 +38,7 @@ const exportedMatModules = [
   MatNativeDateModule,
   MatSnackBarModule,
   MatPaginatorModule,
+  MatSortModule,
   MatProgressSpinnerModule
 ];
 

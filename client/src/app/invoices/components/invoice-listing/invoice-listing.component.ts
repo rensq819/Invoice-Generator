@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewChild } from '@angular/core';
+import { Component, OnInit, ViewChild, AfterViewInit } from '@angular/core';
 import { InvoiceService } from '../../services/invoice.service';
 import { Invoice } from '../../models/invoice';
 import { Router } from '@angular/router';
@@ -11,7 +11,7 @@ import { mergeMap } from 'rxjs/operators';
   templateUrl: './invoice-listing.component.html',
   styleUrls: ['./invoice-listing.component.scss']
 })
-export class InvoiceListingComponent implements OnInit {
+export class InvoiceListingComponent implements OnInit, AfterViewInit {
   @ViewChild(MatPaginator) paginator: MatPaginator;
   displayedColumns = ['item', 'date', 'due', 'qty', 'rate', 'tax', 'action'];
   dataSource: Invoice[] = [];
@@ -21,6 +21,9 @@ export class InvoiceListingComponent implements OnInit {
   constructor(private invoiceService: InvoiceService, private router: Router, private snackBar: MatSnackBar) {}
 
   ngOnInit() {
+  }
+
+  ngAfterViewInit() {
     this.isResultsLoading = true;
     this.paginator.page
       .pipe(
