@@ -1,6 +1,6 @@
-import Joi from "joi";
-import HttpStatus from "http-status-codes";
-import Invoice from "../models/invoice.model";
+import Joi from 'joi';
+import HttpStatus from 'http-status-codes';
+import Invoice from '../models/invoice.model';
 
 export default {
   findAll(req, res, next) {
@@ -20,9 +20,7 @@ export default {
     let { id } = req.params;
     Invoice.findById(id).then(invoice => {
       if (!invoice) {
-        return res
-          .status(HttpStatus.NOT_FOUND)
-          .json({ err: "Inovice could not be found" });
+        return res.status(HttpStatus.NOT_FOUND).json({ err: 'Inovice could not be found' });
       }
       return res.json(invoice);
     });
@@ -71,9 +69,7 @@ export default {
     Invoice.findByIdAndRemove(id)
       .then(invoice => {
         if (!invoice) {
-          return res
-            .status(HttpStatus.NOT_FOUND)
-            .json({ err: "Inovice could not be deleted" });
+          return res.status(HttpStatus.NOT_FOUND).json({ err: 'Inovice could not be deleted' });
         }
         return res.json(invoice);
       })

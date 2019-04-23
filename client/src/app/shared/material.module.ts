@@ -1,5 +1,5 @@
-import { NgModule } from "@angular/core";
-import { CommonModule } from "@angular/common";
+import { NgModule } from '@angular/core';
+import { CommonModule } from '@angular/common';
 import {
   MatButtonModule,
   MatIconModule,
@@ -15,9 +15,10 @@ import {
   MatSelectModule,
   MatDatepickerModule,
   MatNativeDateModule,
-  MatSnackBarModule, 
-  MatPaginatorModule
-} from "@angular/material";
+  MatSnackBarModule,
+  MatPaginatorModule,
+  MatProgressSpinnerModule
+} from '@angular/material';
 
 const exportedMatModules = [
   MatButtonModule,
@@ -35,7 +36,8 @@ const exportedMatModules = [
   MatDatepickerModule,
   MatNativeDateModule,
   MatSnackBarModule,
-  MatPaginatorModule  
+  MatPaginatorModule,
+  MatProgressSpinnerModule
 ];
 
 @NgModule({

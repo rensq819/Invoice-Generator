@@ -16,13 +16,16 @@ export class InvoiceListingComponent implements OnInit {
   displayedColumns = ['item', 'date', 'due', 'qty', 'rate', 'tax', 'action'];
   dataSource: Invoice[] = [];
   resultsLength = 0;
+  isResultsLoading = false;
 
   constructor(private invoiceService: InvoiceService, private router: Router, private snackBar: MatSnackBar) {}
 
   ngOnInit() {
+    this.isResultsLoading = true;
     this.paginator.page
       .pipe(
         mergeMap(data => {
+          this.isResultsLoading = true;
           return this.invoiceService.getInvoices({
             page: data.pageIndex + 1,
             perPage: data.pageSize
@@ -33,27 +36,13 @@ export class InvoiceListingComponent implements OnInit {
         data => {
           this.dataSource = data.docs;
           this.resultsLength = data.total;
+          this.isResultsLoading = false;
         },
         err => {
           this.errorHandler(err, 'Failed to delete invoice');
         }
       );
 
-    // this.paginator.page.subscribe(
-    //   data => {
-    //     this.invoiceService
-    //       .getInvoices({
-    //         page: ++data.pageIndex,
-    //         perPage: data.pageSize
-    //       })
-    //       .subscribe(data => {
-    //         console.log(data);
-    //         this.dataSource = data.docs;
-    //         this.resultsLength = data.total;
-    //       });
-    //   },
-    //   err => this.errorHandler(err, 'Failed to delete invoice')
-    // );
     this.populateInvoices();
   }
 
@@ -81,14 +70,21 @@ export class InvoiceListingComponent implements OnInit {
   }
 
   private populateInvoices() {
-    this.invoiceService.getInvoices({ page: 1, perPage: 10 }).subscribe(data => {
-      this.dataSource = data.docs;
-      this.resultsLength = data.total;
-    }),
-      err => this.errorHandler(err, 'Failed to fetch invoices');
+    this.isResultsLoading = true;
+    this.invoiceService.getInvoices({ page: 1, perPage: 10 }).subscribe(
+      data => {
+        this.dataSource = data.docs;
+        this.resultsLength = data.total;
+      },
+      err => this.errorHandler(err, 'Failed to fetch invoices'),
+      () => {
+        this.isResultsLoading = false;
+      }
+    );
   }
   private errorHandler(error, message) {
     console.error(error);
+    this.isResultsLoading = false;
     this.snackBar.open(message, 'Error', {
       duration: 3000
     });

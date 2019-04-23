@@ -4,7 +4,7 @@
     <button mat-button (click)="createBtnHandler()">New Invoice</button>
   </div>
 </mat-toolbar>
-
+<mat-spinner *ngIf="isResultsLoading"></mat-spinner>
 <table mat-table [dataSource]="dataSource">
   <!-- Item Column -->
   <ng-container matColumnDef="item">
