@@ -35,7 +35,8 @@ export class InvoiceListingComponent implements OnInit, AfterViewInit {
             page: this.paginator.pageIndex,
             perPage: this.paginator.pageSize,
             sortField: this.sort.active,
-            sortDir: this.sort.direction
+            sortDir: this.sort.direction,
+            filter: ''
           });
         }),
         map(data => {
@@ -77,6 +78,28 @@ export class InvoiceListingComponent implements OnInit, AfterViewInit {
     );
   }
 
+  filterText(filterValue: string) {
+    this.isResultsLoading = true;
+    filterValue = filterValue.trim();
+    this.paginator.pageIndex = 0;
+    this.invoiceService
+      .getInvoices({
+        page: this.paginator.pageIndex,
+        perPage: this.paginator.pageSize,
+        sortField: this.sort.active,
+        sortDir: this.sort.direction,
+        filter: filterValue
+      })
+      .subscribe(
+        data => {
+          this.isResultsLoading = false;
+          this.dataSource.data = data.docs;
+          this.resultsLength = data.total;
+        },
+        err => this.errorHandler('Failed to filter invoices', err)
+      );
+  }
+
   private populateInvoices() {
     this.isResultsLoading = true;
     this.invoiceService
@@ -84,7 +107,8 @@ export class InvoiceListingComponent implements OnInit, AfterViewInit {
         page: this.paginator.pageIndex,
         perPage: this.paginator.pageSize,
         sortField: this.sort.active,
-        sortDir: this.sort.direction
+        sortDir: this.sort.direction,
+        filter: ''
       })
       .subscribe(
         data => {
