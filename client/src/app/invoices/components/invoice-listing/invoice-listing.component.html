@@ -66,10 +66,11 @@
 </table>
 
 <mat-paginator
-#paginator
+  #paginator
+  pageInde="0"
   [length]="resultsLength"
   [pageSize]="10"
-  [showFirstLastButtons] = "true"
+  [showFirstLastButtons]="true"
   [pageSizeOptions]="[5, 10, 20]"
 >
 </mat-paginator>

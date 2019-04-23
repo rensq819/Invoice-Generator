@@ -11,7 +11,7 @@ import { remove } from "lodash";
   styleUrls: ["./invoice-listing.component.scss"]
 })
 export class InvoiceListingComponent implements OnInit {
-  @ViewChild(MatPaginator) paginator: MatPaginator
+  @ViewChild(MatPaginator) paginator: MatPaginator;
   displayedColumns = ["item", "date", "due", "qty", "rate", "tax", "action"];
   dataSource: Invoice[] = [];
   resultsLength = 0;
@@ -23,6 +23,21 @@ export class InvoiceListingComponent implements OnInit {
   ) {}
 
   ngOnInit() {
+    this.paginator.page.subscribe(
+      data => {
+        this.invoiceService
+          .getInvoices({
+            page: ++data.pageIndex,
+            perPage: data.pageSize
+          })
+          .subscribe(data => {
+            console.log(data);
+            this.dataSource = data.docs;
+            this.resultsLength = data.total;
+          });
+      },
+      err => this.errorHandler(err, "Failed to delete invoice")
+    );
     this.populateInvoices();
   }
 
@@ -49,11 +64,13 @@ export class InvoiceListingComponent implements OnInit {
     );
   }
 
-  private populateInvoices(){
-    this.invoiceService.getInvoices().subscribe(data => {
-      this.dataSource = data.docs;
-      this.resultsLength = data.total;
-    }),
+  private populateInvoices() {
+    this.invoiceService
+      .getInvoices({ page: 1, perPage: 10 })
+      .subscribe(data => {
+        this.dataSource = data.docs;
+        this.resultsLength = data.total;
+      }),
       err => this.errorHandler(err, "Failed to fetch invoices");
   }
   private errorHandler(error, message) {
