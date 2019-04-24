@@ -9,11 +9,54 @@
   "version": "1.0.0",
   "host": "localhost:3000",
   "basePath": "/api",
-  "tags": [{ "name": "Invoices", "description": "API for Invoice" }],
+  "tags": [
+    { "name": "Invoices", "description": "API for Invoice" },
+    { "name": "Clients", "description": "API for Client" }
+  ],
   "schemes": ["http"],
   "consumes": ["application/json"],
   "produces": ["application/json"],
   "paths": {
+    "/Clients": {
+      "post": {
+        "tags": ["Clients"],
+        "summary": "Create new Client",
+        "description": "Create new Client in the system",
+        "parameters": [
+          {
+            "name": "client",
+            "description": "Client that we want to create",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#definitions/Client"
+            }
+          }
+        ],
+        "produces": ["application/json"],
+        "responses": {
+          "200": {
+            "description": "new Client is created",
+            "schema": {
+              "$ref": "#definitions/Client"
+            }
+          }
+        }
+      },
+      "get": {
+        "tags": ["Clients"],
+        "summary": "Find all Clients from the server",
+        "description": "All clients",
+        "responses": {
+          "200": {
+            "description": "Ok",
+            "schema": {
+              "$ref": "#definitions/Clients"
+            }
+          }
+        }
+      }
+    },
     "/Invoices": {
       "post": {
         "tags": ["Invoices"],
@@ -149,8 +192,32 @@
     }
   },
   "definitions": {
+    "Client": {
+      "required": ["firstName", "lastName", "email"],
+      "properties": {
+        "_id": {
+          "type": "string",
+          "uniqueItems": true
+        },
+        "firstName": {
+          "type": "string"
+        },
+        "lastName": {
+          "type": "string"
+        },
+        "email": {
+          "type": "string"
+        }
+      }
+    },
+    "Clients": {
+      "type": "array",
+      "items": {
+        "$ref": "#definitions/Client"
+      }
+    },
     "Invoice": {
-      "required": ["item, qty, date, due"],
+      "required": ["item", "qty", "date", "due", "client"],
       "properties": {
         "_id": {
           "type": "string",
@@ -178,6 +245,9 @@
         "tax": {
           "type": "number",
           "format": "float"
+        },
+        "client": {
+          "type": "string"
         }
       }
     },
@@ -205,6 +275,9 @@
         "tax": {
           "type": "number",
           "format": "float"
+        },
+        "client": {
+          "type": "string"
         }
       }
     },
@@ -214,17 +287,17 @@
           "type": "array",
           "$ref": "#definitions/Invoice"
         },
-        "total":{
-          "type":"integer"
+        "total": {
+          "type": "integer"
         },
-        "page":{
-          "type":"integer"
+        "page": {
+          "type": "integer"
         },
-        "pages":{
-          "type":"integer"
+        "pages": {
+          "type": "integer"
         },
-        "limit":{
-          "type":"integer"
+        "limit": {
+          "type": "integer"
         }
       }
     }

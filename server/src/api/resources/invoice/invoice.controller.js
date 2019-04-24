@@ -10,7 +10,9 @@ export default {
       // if want to select only two columns
       // select: "_id item",
       page: parseInt(page, 10),
-      limit: parseInt(perPage, 10)
+      limit: parseInt(perPage, 10),
+      // show client result (auto-match)
+      populate: 'client'
     };
     const query = {};
     if (filter) {
@@ -41,6 +43,7 @@ export default {
       item: Joi.string().required(),
       date: Joi.date().required(),
       due: Joi.date().required(),
+      client: Joi.string().required(),
       qty: Joi.number()
         .integer()
         .required(),
@@ -65,7 +68,8 @@ export default {
         .integer()
         .optional(),
       tax: Joi.number().optional(),
-      rate: Joi.number().optional()
+      rate: Joi.number().optional(),
+      client: Joi.string().optional()
     });
     const { error, value } = Joi.validate(req.body, schema);
     if (error && error.details) {
