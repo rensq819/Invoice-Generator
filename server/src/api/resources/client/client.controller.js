@@ -12,7 +12,23 @@ export default {
       }
       const client = await Client.create(value);
       return res.json(client);
-    } catch(error) {
+    } catch (error) {
+      res.status(INTERNAL_SERVER_ERROR).json(error);
+    }
+  },
+  async findAll(req, res) {
+    try {
+      const clients = await Client.find();
+      return res.json(clients);
+    } catch (error) {
+      res.status(INTERNAL_SERVER_ERROR).json(error);
+    }
+  },
+  async findOne(req, res) {
+    try {
+      const client = await Client.findById(req.params.id);
+      return res.json(client);
+    } catch (error) {
       res.status(INTERNAL_SERVER_ERROR).json(error);
     }
   }
