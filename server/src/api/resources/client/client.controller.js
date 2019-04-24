@@ -1,6 +1,6 @@
 import { create } from 'domain';
 import clientService from './client.service';
-import { BAD_REQUEST, INTERNAL_SERVER_ERROR } from 'http-status-codes';
+import { BAD_REQUEST, INTERNAL_SERVER_ERROR, NOT_FOUND } from 'http-status-codes';
 import Client from './client.model';
 
 export default {
@@ -27,6 +27,35 @@ export default {
   async findOne(req, res) {
     try {
       const client = await Client.findById(req.params.id);
+      if (!client) {
+        return res.status(NOT_FOUND).json({ err: 'client not found' });
+      }
+      return res.json(client);
+    } catch (error) {
+      res.status(INTERNAL_SERVER_ERROR).json(error);
+    }
+  },
+  async delete(req, res) {
+    try {
+      const client = await Client.findOneAndRemove({ _id: req.params.id });
+      if (!client) {
+        return res.status(NOT_FOUND).json({ error: 'could not delete client' });
+      }
+      return res.json(client);
+    } catch (error) {
+      res.status(INTERNAL_SERVER_ERROR).json(error);
+    }
+  },
+  async update(req, res) {
+    try {
+      const { value, error } = clientService.validateCreateSchema(req.body);
+      if (error && error.details) {
+        return res.status(BAD_REQUEST).json(error);
+      }
+      const client = await Client.findOneAndUpdate({ _id: req.params.id }, value, { new: true });
+      if (!client) {
+        return res.status(NOT_FOUND).json({ error: 'could not delete client' });
+      }
       return res.json(client);
     } catch (error) {
       res.status(INTERNAL_SERVER_ERROR).json(error);
