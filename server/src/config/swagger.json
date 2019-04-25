@@ -271,6 +271,19 @@
         }
       }
     },
+    "UpdateClient": {
+      "properties": {
+        "firstName": {
+          "type": "string"
+        },
+        "lastName": {
+          "type": "string"
+        },
+        "email": {
+          "type": "string"
+        }
+      }
+    },
     "Clients": {
       "type": "array",
       "items": {
