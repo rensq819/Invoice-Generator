@@ -47,5 +47,12 @@ export default {
     } catch (error) {
       return res.status(INTERNAL_SERVER_ERROR).json(error);
     }
+  },
+  async test(req, res) {
+    try {
+      return res.json(req.user);
+    } catch (error) {
+      return res.status(INTERNAL_SERVER_ERROR).json(error);
+    }
   }
 };
