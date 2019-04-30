@@ -1,2 +1,1 @@
-
-export * from './client.router';
+export { clientRouter } from './client.router';
