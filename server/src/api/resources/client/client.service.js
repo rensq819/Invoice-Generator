@@ -14,5 +14,19 @@ export default {
       return { error };
     }
     return { value };
+  },
+  validateUpdateSchema(body) {
+    const schema = Joi.object().keys({
+      firstName: Joi.string().optional(),
+      lastName: Joi.string().optional(),
+      email: Joi.string()
+        .email()
+        .optional(),
+    });
+    const { error, value } = Joi.validate(body, schema);
+    if (error && error.details) {
+      return { error };
+    }
+    return { value };
   }
 };

@@ -1,3 +1,2 @@
-import { clientRouter } from './client.router';
 
-export * from clientRouter
+export * from './client.router';

@@ -4,6 +4,8 @@ import { Router, ActivatedRoute } from '@angular/router';
 import { InvoiceService } from '../../services/invoice.service';
 import { MatSnackBar } from '@angular/material';
 import { Invoice } from '../../models/invoice';
+import { ClientService } from 'src/app/clients/services/client.service';
+import { Client } from 'src/app/clients/models/client';
 
 @Component({
   selector: 'app-invoice-form',
@@ -13,10 +15,12 @@ import { Invoice } from '../../models/invoice';
 export class InvoiceFormComponent implements OnInit {
   private invoice: Invoice;
   invoiceForm: FormGroup;
+  clients: Client[] = [];
 
   constructor(
     private fb: FormBuilder,
     private invoiceService: InvoiceService,
+    private clientService: ClientService,
     private snackBar: MatSnackBar,
     private router: Router,
     private route: ActivatedRoute
@@ -25,6 +29,7 @@ export class InvoiceFormComponent implements OnInit {
   ngOnInit() {
     this.createForm();
     this.setInvoiceToForm();
+    this.setClients();
   }
 
   createForm() {
@@ -34,7 +39,8 @@ export class InvoiceFormComponent implements OnInit {
       due: ['', Validators.required],
       qty: ['', Validators.required],
       rate: '',
-      tax: ''
+      tax: '',
+      client: ['', Validators.required]
     });
   }
 
@@ -42,6 +48,7 @@ export class InvoiceFormComponent implements OnInit {
     // use activated route
     this.route.params.subscribe(params => {
       let id = params['id'];
+      debugger
       if (!id) {
         return;
       }
@@ -59,18 +66,16 @@ export class InvoiceFormComponent implements OnInit {
   onSubmit() {
     // user wants to edit an existing invoice
     if (this.invoice) {
-      this.invoiceService
-        .updateInvoiceById(this.invoice._id, this.invoiceForm.value)
-        .subscribe(
-          data => {
-            this.snackBar.open(' Invoice update', 'Success', {
-              duration: 3000
-            });
-            this.invoiceForm.reset();
-            this.router.navigate(['dashboard', 'invoices']);
-          },
-          err => this.errorHandler(err, 'Failed to update invoice')
-        );
+      this.invoiceService.updateInvoiceById(this.invoice._id, this.invoiceForm.value).subscribe(
+        data => {
+          this.snackBar.open(' Invoice update', 'Success', {
+            duration: 3000
+          });
+          this.invoiceForm.reset();
+          this.router.navigate(['dashboard', 'invoices']);
+        },
+        err => this.errorHandler(err, 'Failed to update invoice')
+      );
     }
     // user wants to create new invoice
     else {
@@ -87,6 +92,14 @@ export class InvoiceFormComponent implements OnInit {
     }
   }
 
+  setClients() {
+    this.clientService.getClients().subscribe(
+      clients => {
+        this.clients = clients;
+      },
+      err => this.errorHandler(err, 'Could not get clients')
+    );
+  }
   private errorHandler(error, message) {
     console.error(error);
     this.snackBar.open(message, 'Error', {
