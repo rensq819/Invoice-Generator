@@ -14,7 +14,7 @@ export default {
 
       // create new user
       const user = await User.create(value);
-      return res.json(user);
+      return res.json({ success: true, message: 'User created successfully' });
     } catch (error) {
       return res.status(INTERNAL_SERVER_ERROR).json(error);
     }
