@@ -31,7 +31,6 @@ export class InvoiceService {
   }
 
   getInvoiceById(id: string): Observable<Invoice> {
-    debugger
     return this.httpClient.get<Invoice>(`${BASE_URL}/invoices/${id}`);
   }
 
